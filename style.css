@@ -1,0 +1,13 @@
+html, body{
+    background-color: #c4c4c4;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+
+#canvas {
+  display: block;           /* remove inline-block gap */
+  width: 100vw;             /* full viewport width */
+  height: 100vh;            /* full viewport height */
+}
