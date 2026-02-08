@@ -230,6 +230,18 @@ window.addEventListener("pointerdown", (e) => {
 
     const selectedItem = player.backpack.quickUse[itemIndex];
     const bi = blocks.findIndex(b => b === selectedItem);
+    let mobileControlBuff = false;
+
+
+    for(let i = 0; i < tsBtns.length; i++){
+        const btn = tsBtns[i];
+        if (
+            clickX >= btn.x &&
+            clickX <= btn.x + btn.w &&
+            clickY >= btn.y &&
+            clickY <= btn.y + btn.h
+        ) mobileControlBuff = true;
+    }
 
 
 
@@ -307,7 +319,7 @@ window.addEventListener("pointerdown", (e) => {
                 console.log(item);
             }
         }
-        else if(!block && !props && selectedItem.type === `placable-props` ){
+        else if(!block && !props && selectedItem.type === `placable-props`){
 
             
             if(isBlockedAt(roundedx, roundedy + grid)){
@@ -569,18 +581,7 @@ window.addEventListener("pointerdown", (e) => {
     }
 
 
-    let mobileControlBuff = false;
-
-
-    for(let i = 0; i < tsBtns.length; i++){
-        const btn = tsBtns[i];
-        if (
-            clickX >= btn.x &&
-            clickX <= btn.x + btn.w &&
-            clickY >= btn.y &&
-            clickY <= btn.y + btn.h
-        ) mobileControlBuff = true;
-    }
+    
 
     if (itemIndex === 0 && canReach(roundedx, roundedy) && !player.atBackpack && !player.atStore) {
 
