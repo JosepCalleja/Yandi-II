@@ -111,7 +111,9 @@ const waterSeed = new Image();
 waterSeed.src = `waterSeed.png`;
 
 
-
+//vip
+const wheat = new Image();
+wheat.src = `wheat.png`;
 
 
 document.addEventListener('contextmenu', function(e) {
@@ -171,7 +173,7 @@ let mouseDownBtnId = null;
 canvas.addEventListener("contextmenu", e => e.preventDefault());
 
 function harvesting(i, props, roundedX, roundedY){
-    if(props.ready){
+    if(props.ready == 2){
         console.log(props);
         treeFarmable(i, roundedX, roundedY);
         removeProps(roundedX, roundedY);
@@ -200,7 +202,7 @@ function drawTouchScreen(){
 }
 
 
-window.addEventListener("mousedown", (e) => {
+window.addEventListener("pointerdown", (e) => {
     
 
     const rect   = canvas.getBoundingClientRect();
@@ -1074,7 +1076,7 @@ window.addEventListener("mousedown", (e) => {
 
 
 
-window.addEventListener('mouseup', (e) => {
+window.addEventListener('pointerup', (e) => {
     const rect   = canvas.getBoundingClientRect();
     const scaleX = canvas.width  / rect.width;
     const scaleY = canvas.height / rect.height;
@@ -2863,7 +2865,7 @@ function hangingLeavesDesign(x, y, scale = 1){
     ctx.scale(scale, scale);
     ctx.imageSmoothingEnabled = false;
     
-    ctx.drawImage(hangingLeaves, x, y, grid, grid);
+    ctx.drawImage(wheat, x, y, grid, grid);
     
 
     ctx.restore();
@@ -2876,7 +2878,7 @@ function hangingLeavesDesign2(x, y, scale = 1){
 
 
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(hangingLeaves, -grid / 2, -grid / 2, grid, grid);
+    ctx.drawImage(wheat, -grid / 2, -grid / 2, grid, grid);
 
     ctx.restore();
 }
@@ -2889,7 +2891,7 @@ function hangingLeavesDesign3(x, y, scale = 0.5){
 
 
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(hangingLeaves, -grid / 2, -grid / 2, grid, grid);
+    ctx.drawImage(wheat, -grid / 2, -grid / 2, grid, grid);
 
     ctx.restore();
 }
@@ -3691,14 +3693,17 @@ function BuildProps(blockIndex, x, y, z = 0) {
     hp: blockData.hp,
     tier: blockData.tier,
     custom: blockData.custom,
-    ready: false
+    ready: 0
   };
 
   gameProps.push(prop);
 
-  // 5) make it "ready" after z milliseconds
   setTimeout(() => {
-    prop.ready = true;
+    prop.ready = 1;
+  }, z/2);
+
+  setTimeout(() => {
+    prop.ready = 2;
   }, z);
 }
 
@@ -5465,53 +5470,47 @@ canvas.addEventListener('wheel', (e) => {
 });
 
 
+const pointers = new Map();
 let lastDistance = null;
 
-canvas.addEventListener("pointerdown", onPointerDown);
-canvas.addEventListener("pointermove", onPointerMove);
-canvas.addEventListener("pointerup", onPointerUp);
-canvas.addEventListener("pointercancel", onPointerUp);
+canvas.addEventListener("pointerdown", e => {
+    pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
+});
 
-const pointers = new Map();
-
-function onPointerDown(e) {
-    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
-}
-
-function onPointerMove(e) {
+canvas.addEventListener("pointermove", e => {
     if (!pointers.has(e.pointerId)) return;
-    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    pointers.set(e.pointerId, {x: e.clientX, y: e.clientY});
 
     if (pointers.size === 2) {
-        // two fingers → pinch zoom
-        const pts = Array.from(pointers.values());
-        const dx = pts[0].x - pts[1].x;
-        const dy = pts[0].y - pts[1].y;
+        const [p1, p2] = Array.from(pointers.values());
+        const dx = p1.x - p2.x;
+        const dy = p1.y - p2.y;
         const distance = Math.hypot(dx, dy);
 
         if (lastDistance != null) {
             const delta = distance - lastDistance;
-
-            // tweak zoom speed
-            const zoomSpeed = 0.005;
+            const zoomSpeed = 0.005; // tweak as needed
             zoom += delta * zoomSpeed;
 
-            // clamp zoom like your wheel logic
-            if(!player.canNoClip){
-                zoom = Math.min(Math.max(zoom, 1), 3);
-            } else {
-                zoom = Math.min(Math.max(zoom, 0.02), 10);
-            }
+            // clamp zoom
+            if (!player.canNoClip) zoom = Math.min(Math.max(zoom, 1), 3);
+            else zoom = Math.min(Math.max(zoom, 0.02), 10);
         }
 
         lastDistance = distance;
     }
-}
+});
 
-function onPointerUp(e) {
+canvas.addEventListener("pointerup", e => {
     pointers.delete(e.pointerId);
     if (pointers.size < 2) lastDistance = null;
-}
+});
+
+canvas.addEventListener("pointercancel", e => {
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) lastDistance = null;
+});
+
 
 
 let camX = 0
@@ -5691,7 +5690,16 @@ function animate() {
         const designFn = blockIndexToDesign[prop.blockIndex];
         if (designFn) {
             if(prop.custom.endsWith("tree")){
-                if(prop.ready){
+                if(prop.ready == 2){
+                    if(prop.custom == 'still adding later'){
+                        designFn(prop.x, prop.y, 128);
+                    }
+                    else{
+                        designFn(prop.x, prop.y, 64);
+                    }
+                    
+                }
+                else if(prop.ready == 1){
                     if(prop.custom == 'still adding later'){
                         designFn(prop.x, prop.y, 64);
                     }
