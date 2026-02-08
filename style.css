@@ -9,6 +9,6 @@ html, body{
 #canvas {
   display: block;           /* remove inline-block gap */
   width: 100vw;             /* full viewport width */
-  height: 100vh;            /* full viewport height */
+  height: 100dvh;            /* full viewport height */
   touch-action: none;
 }
