@@ -12,11 +12,11 @@ let itemIndex = 0;
 let zoom = 1.5;
 const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    window.scrollTo(0, 1);
-  }, 0);
-});
+function hideBar() {
+  window.scrollTo(0, 1);
+}
+
+document.addEventListener("touchstart", hideBar, { once: true });
 
 
 
