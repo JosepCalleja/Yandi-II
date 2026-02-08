@@ -12,14 +12,6 @@ let itemIndex = 0;
 let zoom = 1.5;
 const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-function hideBar() {
-  window.scrollTo(0, 1);
-}
-
-document.addEventListener("touchstart", hideBar, { once: true });
-
-
-
 
 const hair01 = new Image();
 hair01.src = `hair1.png`;
@@ -189,22 +181,35 @@ function harvesting(i, props, roundedX, roundedY){
     }
 }
 
+class TouchScreenBtn{
+    id;
+    x;
+    y;
+    w;
+    h;
+    constructor(i, ix, iy, iw, ih){
+        this.id = i;
+        this.x = ix;
+        this.y = iy;
+        this.w = iw;
+        this.h = ih;
+    }
+}
 
-if(!isMobile){
-    
-}
-else{
-    
-}
+const tsBtns = [
+    new TouchScreenBtn(0, 100, 550, 75, 75),
+    new TouchScreenBtn(1, 250, 550, 75, 75),
+    new TouchScreenBtn(2, 850, 550, 75, 75),
+    new TouchScreenBtn(3, 50, 50, 75, 75),
+    new TouchScreenBtn(4, 200, 50, 75, 75)
+]
 
 
 function drawTouchScreen(){
     ctx.fillStyle = `rgba(150, 150, 255, 0.6)`;
-    ctx.fillRect(100, 550, 75, 75);
-    ctx.fillRect(250, 550, 75, 75);
-    ctx.fillRect(850, 550, 75, 75);
-    ctx.fillRect(50, 50, 75, 75);
-    ctx.fillRect(200, 50, 75, 75);
+    for(let i = 0; i <  tsBtns.length; i++){
+        ctx.fillRect(tsBtns[i].x, tsBtns[i].y, tsBtns[i].w, tsBtns[i].h);
+    }
 }
 
 
@@ -872,6 +877,106 @@ window.addEventListener("pointerdown", (e) => {
     }
 
 
+    if(!player.atBackpack && !player.atStore){
+        for(let i = 0; i < tsBtns.length; i++){
+            const btn = tsBtns[i];
+            if (
+                clickX >= btn.x &&
+                clickX <= btn.x + btn.w &&
+                clickY >= btn.y &&
+                clickY <= btn.y + btn.h
+              ) {
+                if(btn.id == 0) keys.a = true;
+                if(btn.id == 1) keys.d = true;
+                if(btn.id == 2){
+                    wPressed = true;
+                    startJump();
+                }
+                if(btn.id == 3){
+                    if(!player.isGhost){
+                        death();
+                    }
+                } 
+                if(btn.id == 4) {
+                    const quickItem = player.backpack.quickUse[itemIndex];
+                    if (itemIndex === 0) {
+                        activeBubble = { x: 500, y: 350, text: "I wouldn't drop my fist if i were you...", timer: 90 };
+                        return;
+                    }
+                    if(!player.canMove || player.frozen) return;
+                    if(!quickItem){
+                        activeBubble = { x: 500, y: 350, text: "You can't drop something that doesn't exist, like your father...", timer: 90 };
+                        return;
+                    }
+
+                    const roundedX = Math.floor(player.x / 50) * 50;
+                    const roundedX2 = Math.round(player.x / 50) * 50;
+                    const roundedY = Math.floor(player.y / 50) * 50;
+
+                    const block = gameblocks.find(b => b.x === roundedX2 + grid && b.y === roundedY);
+                    const block2 = gameblocks.find(b => b.x === roundedX - grid && b.y === roundedY);
+                    const nameToFind = quickItem.name; 
+
+
+                    const indexInItemsClass = itemsClass.findIndex(i => i.name === nameToFind);
+
+                    console.log("Item Index:", itemIndex);
+                    console.log("Quick Item:", quickItem);
+
+
+                    console.log(indexInItemsClass)
+                    if (indexInItemsClass === -1) {
+                        console.warn(`'${nameToFind}' not found in itemsClass`);
+                        return;
+                    }
+
+                    const item = itemsClass[indexInItemsClass].design;
+
+
+                    const item0 = player.backpack.quickUse[itemIndex];
+                    const item1 = player.backpack.inventory.findIndex(invItem => invItem.name === item0);
+                    const item2 = player.backpack.inventory[item1];
+
+                    if(item2.amount <= 1){
+                        if(player.facing === 1 && !block){
+                            dropItem(player.x + grid, player.y, indexInItemsClass);
+                            player.backpack.inventory.splice(item1, 1);
+                            player.backpack.quickUse.splice(itemIndex, 1);
+                            player.backpack.quickUse.push(undefined);
+                            itemIndex = 0;
+                        }
+                        else if(player.facing === 0 && !block2){
+                            dropItem(player.x - grid, player.y, indexInItemsClass);
+                            player.backpack.inventory.splice(item1, 1);
+                            player.backpack.quickUse.splice(itemIndex, 1);
+                            player.backpack.quickUse.push(undefined);
+                            itemIndex = 0;
+                        }
+                        else{
+                            activeBubble = { x: 500, y: 350, text: "The item bounced back into your hand", timer: 90 };
+                        }
+                    
+                    }
+                    else{
+                        
+                        if(player.facing === 1 && !block){
+                            dropItem(player.x + grid, player.y, indexInItemsClass);
+                            item2.amount--;
+                        }
+                        else if(player.facing === 0 && !block2){
+                            dropItem(player.x - grid, player.y, indexInItemsClass);
+                            item2.amount--;
+                        }
+                        else{
+                            activeBubble = { x: 500, y: 350, text: "The item bounced back into your hand", timer: 90 };
+                        }
+                    }
+                }
+              }
+        }
+    }
+
+
 
     if (player.atBackpack) {
         for (let i = 0; i < btns.length; i++) {
@@ -1079,9 +1184,6 @@ window.addEventListener("pointerdown", (e) => {
 
 });
 
-
-
-
 window.addEventListener('pointerup', (e) => {
     const rect   = canvas.getBoundingClientRect();
     const scaleX = canvas.width  / rect.width;
@@ -1089,6 +1191,24 @@ window.addEventListener('pointerup', (e) => {
     const clickX = (e.clientX - rect.left) * scaleX;
     const clickY = (e.clientY - rect.top ) * scaleY;
 
+    if(!player.atBackpack && !player.atStore){
+        for(let i = 0; i < tsBtns.length; i++){
+            const btn = tsBtns[i];
+            if (
+                clickX >= btn.x &&
+                clickX <= btn.x + btn.w &&
+                clickY >= btn.y &&
+                clickY <= btn.y + btn.h
+              ) {
+                if(btn.id == 0) keys.a = false;
+                if(btn.id == 1) keys.d = false;
+                if(btn.id == 2){
+                    wPressed = false;
+                    startJump();
+                }
+            }
+        }
+    }
     if (player.atStore) {
         for (const btn of storeBtns) {
             const mouse = clickX >= btn.x &&
@@ -1704,19 +1824,9 @@ player.backpack.inventory = [
         name: punchTool,
         amount: 1,
 
-    },
-    {
-        name: blocks[10],
-        amount: 5,
+    }
 
-    },
-    {
-        name: blocks[28],
-        amount: 100,
-
-    },
-
-],
+];
 
 player.backpack.quickUse = [
     player.backpack.inventory[0].name,
@@ -4804,24 +4914,20 @@ let gravityInterval = null;
 
 let wPressed = false;
 
-document.addEventListener('keydown', e => {
-  if ((e.code === 'KeyW' || e.code === 'Space') && !wPressed) {
-    wPressed = true;
-    startJump();
-  }
-});
-document.addEventListener('keyup', e => {
-  if (e.code === 'KeyW' || e.code === 'Space') {
-    wPressed = false;
-  }
-});
-
-
 const keys = { a: false, d: false };
 
 window.addEventListener('keyup', (e) => {
     const key = e.key.toLowerCase();
     if (keys.hasOwnProperty(key)) keys[key] = false;
+    if (e.code === 'KeyW' || e.code === 'Space') {
+    wPressed = false;
+  }
+  if(e.key.toLowerCase() === 'r'){
+        if(!player.isGhost){
+            death();
+        }
+        
+    }
 });
 
 window.addEventListener('keydown', (e) => {
@@ -4830,16 +4936,10 @@ window.addEventListener('keydown', (e) => {
     if(!player.hasMoved){
         player.hasMoved = true;
     }
-});
-
-
-window.addEventListener('keyup', (e) => {
-    if(e.key.toLowerCase() === 'r'){
-        if(!player.isGhost){
-            death();
-        }
-        
-    } 
+    if ((e.code === 'KeyW' || e.code === 'Space') && !wPressed) {
+    wPressed = true;
+    startJump();
+  }
 });
 
 window.addEventListener('keydown', (e) => {
@@ -5095,7 +5195,7 @@ function update() {
         
 
         
-            if ((movingLeft || movingRight)) {
+        if ((movingLeft || movingRight)) {
         
             player.isMoving = true;
         
@@ -5114,12 +5214,6 @@ function update() {
                 player.facing = movingLeft ? 0 : 1;
         
             }
-        
-            
-        
-            
-        
-
         
             if (!isBlockedAt(player.x, player.y + grid) && player.canMove) {
         
@@ -5737,6 +5831,9 @@ function animate() {
     else if(player.atStore){
         storeUi(grid * 2, grid * 2)
     }
+    else{
+        drawTouchScreen();
+    }
   
     if (activeBubble) {
         bubbleText(activeBubble.x, activeBubble.y, activeBubble.text);
@@ -5745,8 +5842,7 @@ function animate() {
 
         if (activeBubble.timer <= 0) activeBubble = null;
     }
-
-    drawTouchScreen();
+    
 
     ctx.restore();
     requestAnimationFrame(animate);
