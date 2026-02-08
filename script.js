@@ -585,7 +585,7 @@ window.addEventListener("pointerdown", (e) => {
     if (itemIndex === 0 && canReach(roundedx, roundedy) && !player.atBackpack && !player.atStore) {
 
 
-        if(isMobile && !mobileControlBuff){
+        if(isMobile && mobileControlBuff){
         //do absolutely nothing...
         }
         else if(player.canPunch){
