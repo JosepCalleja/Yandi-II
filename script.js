@@ -199,18 +199,66 @@ class TouchScreenBtn{
 const tsBtnsSz = 100;
 
 const tsBtns = [
-    new TouchScreenBtn(0, 100, 550, tsBtnsSz, tsBtnsSz),
-    new TouchScreenBtn(1, 250, 550, tsBtnsSz, tsBtnsSz),
-    new TouchScreenBtn(2, 850, 550, tsBtnsSz, tsBtnsSz),
+    new TouchScreenBtn(0, 100, 525, tsBtnsSz, tsBtnsSz),
+    new TouchScreenBtn(1, 250, 525, tsBtnsSz, tsBtnsSz),
+    new TouchScreenBtn(2, 850, 525, tsBtnsSz, tsBtnsSz),
     new TouchScreenBtn(3, 50, 50, tsBtnsSz, tsBtnsSz),
     new TouchScreenBtn(4, 200, 50, tsBtnsSz, tsBtnsSz)
 ];
 
 
-function drawTouchScreen(){
-    ctx.fillStyle = `rgba(150, 150, 255, 0.6)`;
-    for(let i = 0; i <  tsBtns.length; i++){
-        ctx.fillRect(tsBtns[i].x, tsBtns[i].y, tsBtns[i].w, tsBtns[i].h);
+function drawTouchScreen() {
+    ctx.fillStyle = "rgba(150, 150, 255, 0.6)";
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 3;
+    ctx.font = "bold 28px monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    for (let i = 0; i < tsBtns.length; i++) {
+        const b = tsBtns[i];
+
+        // button background
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+
+        // center of button
+        const cx = b.x + b.w / 2;
+        const cy = b.y + b.h / 2;
+
+        ctx.fillStyle = "white";
+
+        switch (i) {
+            case 0: // <
+                ctx.fillText("<", cx, cy);
+                break;
+
+            case 1: // >
+                ctx.fillText(">", cx, cy);
+                break;
+
+            case 2: // ^
+                ctx.fillText("^", cx, cy);
+                break;
+
+            case 3: // death button ☠️
+                ctx.strokeStyle = "red";
+                ctx.lineWidth = 4;
+
+                ctx.beginPath();
+                ctx.moveTo(b.x + 10, b.y + 10);
+                ctx.lineTo(b.x + b.w - 10, b.y + b.h - 10);
+                ctx.moveTo(b.x + b.w - 10, b.y + 10);
+                ctx.lineTo(b.x + 10, b.y + b.h - 10);
+                ctx.stroke();
+                break;
+
+            case 4: // drop item ⬇
+                ctx.fillText("↓", cx, cy);
+                break;
+        }
+
+        ctx.fillStyle = "rgba(150, 150, 255, 0.6)";
+        ctx.strokeStyle = "white";
     }
 }
 
