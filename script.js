@@ -196,13 +196,15 @@ class TouchScreenBtn{
     }
 }
 
+const tsBtnsSz = 100;
+
 const tsBtns = [
-    new TouchScreenBtn(0, 100, 550, 75, 75),
-    new TouchScreenBtn(1, 250, 550, 75, 75),
-    new TouchScreenBtn(2, 850, 550, 75, 75),
-    new TouchScreenBtn(3, 50, 50, 75, 75),
-    new TouchScreenBtn(4, 200, 50, 75, 75)
-]
+    new TouchScreenBtn(0, 100, 550, tsBtnsSz, tsBtnsSz),
+    new TouchScreenBtn(1, 250, 550, tsBtnsSz, tsBtnsSz),
+    new TouchScreenBtn(2, 850, 550, tsBtnsSz, tsBtnsSz),
+    new TouchScreenBtn(3, 50, 50, tsBtnsSz, tsBtnsSz),
+    new TouchScreenBtn(4, 200, 50, tsBtnsSz, tsBtnsSz)
+];
 
 
 function drawTouchScreen(){
