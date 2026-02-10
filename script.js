@@ -12,7 +12,10 @@ let itemIndex = 0;
 let zoom = 1.5;
 const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-
+const smoke = new Image();
+smoke.src = `smoke.png`;
+const crack = new Image();
+crack.src = `crack.png`;
 const hair01 = new Image();
 hair01.src = `hair1.png`;
 const hair02 = new Image();
@@ -260,6 +263,21 @@ function drawTouchScreen() {
         ctx.fillStyle = "rgba(150, 150, 255, 0.6)";
         ctx.strokeStyle = "white";
     }
+}
+
+let smokeProc = {
+    proc: false,
+    x: 0,
+    y: 0
+};
+
+function drawSmoke(smokeProc){
+    ctx.drawImage(smoke, smokeProc.x, smokeProc.y, grid, grid);
+}
+
+function drawCrack(obj){
+    if(obj.durability < (obj.hp/2)) ctx.drawImage(crack, 0, 32, 32, 32, obj.x, obj.y, grid, grid);
+    else ctx.drawImage(crack, 0, 0, 32, 32, obj.x, obj.y, grid, grid);
 }
 
 
@@ -759,6 +777,7 @@ window.addEventListener("pointerdown", (e) => {
 
             setTimeout(() => {
                 player.canPunch = true;
+                smokeProc.proc = false;
             }, 250);
             let rand = Math.random();
             let rand2 = Math.random();
@@ -768,6 +787,12 @@ window.addEventListener("pointerdown", (e) => {
                 activeBubble = {x: 500, y: 400 - grid * 2, text: "Can't Break This", timer: 50};
             } 
             else if (block && block.type !== 'unbreakable') {
+                
+                smokeProc.proc = true;
+                smokeProc.x = block.x;
+                smokeProc.y = block.y;
+                
+
                 if (block.durability <= 1) {
                     removeBlocks(roundedx, roundedy);
                     player.experience += block.tier;
@@ -903,6 +928,9 @@ window.addEventListener("pointerdown", (e) => {
 
             }
             else if(props){
+                smokeProc.proc = true;
+                smokeProc.x = props.x;
+                smokeProc.y = props.y;
                 if(props.durability <= 1) {
 
                     if(props.custom == "grassblocktree"){
@@ -1013,6 +1041,9 @@ window.addEventListener("pointerdown", (e) => {
                 }
             }
             else if(bg) {
+                smokeProc.proc = true;
+                smokeProc.x = bg.x;
+                smokeProc.y = bg.y;
                 if(bg.durability <= 1) {
                     removeBackground(roundedx, roundedy);
                     player.experience += bg.tier;
@@ -5931,6 +5962,7 @@ function animate() {
             ctx.fillStyle = def.color;
             ctx.fillRect(bg.x, bg.y, def.width, def.height);
         }
+        if(bg.durability < bg.hp) drawCrack(bg);
     });
 
 
@@ -5973,6 +6005,7 @@ function animate() {
             ctx.fillStyle = def.color;
             ctx.fillRect(block.x, block.y, def.width, def.height);
         }
+        if(block.durability < block.hp) drawCrack(block);
     });
 
 
@@ -6047,7 +6080,12 @@ function animate() {
             ctx.fillStyle = def.color;
             ctx.fillRect(prop.x, prop.y, def.width, def.height);
         }
+        if(prop.durability < prop.hp) drawCrack(prop);
     });
+
+    
+    
+    if(smokeProc.proc) drawSmoke(smokeProc);
 
 
     ctx.resetTransform();
