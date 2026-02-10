@@ -11,4 +11,7 @@ html, body{
   width: 100vw;             /* full viewport width */
   height: 100dvh;            /* full viewport height */
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
