@@ -1375,6 +1375,11 @@ window.addEventListener('pointerup', (e) => {
 });
 
 
+window.addEventListener("blur", () => {
+  keys.a = false;
+  keys.d = false;
+});
+
 
 
 function isCardContentEmpty(card) {
