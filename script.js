@@ -1230,6 +1230,38 @@ window.addEventListener("pointerdown", (e) => {
                         }
                     }
 
+                }
+                if(storepage === 2){
+
+
+                    if(btn.id === 3){
+                        cardContent = {
+                            name: item[3].name,
+                            value: item[3].value,
+                            description: item[3].description,
+                            purchaseBtn: storeBtns[7],
+                            discardBtn: storeBtns[8]
+                        }
+                    }
+                    if(btn.id === 4){
+                        cardContent = {
+                            name: "Coming Soon!",
+                            value: 0,
+                            description: "Wait bro",
+                            purchaseBtn: storeBtns[7],
+                            discardBtn: storeBtns[8]
+                        }
+                    }
+                    if(btn.id === 5){
+                        cardContent = {
+                            name: "Coming Soon!",
+                            value: 0,
+                            description: "Wait bro",
+                            purchaseBtn: storeBtns[7],
+                            discardBtn: storeBtns[8]
+                        }
+                    }
+
                 } 
 
 
@@ -1322,31 +1354,58 @@ window.addEventListener('pointerup', (e) => {
 
                         if (player.gems >= item[0].value &&
                             player.backpack.inventory.length <= player.backpack.maximum) {
-                            if(player.backpack.inventory.length <= player.backpack.maximum - 3){
+                            if(storepage === 1){
+                                if(player.backpack.inventory.length <= player.backpack.maximum - 3){
 
-                                player.gems -= item[0].value;
-                                for (let i = 0; i < 3; i++) {
+                                    player.gems -= item[0].value;
+                                    for (let i = 0; i < 3; i++) {
 
-                                    const reward = item[0].item[i]; // block object, e.g. blocks[0]
+                                        const reward = item[0].item[i]; // block object, e.g. blocks[0]
+                                        let bp = player.backpack.inventory.findIndex(slot => slot.name.name === reward.name);
+                                        if (bp === -1) {
+                                            player.backpack.inventory.push({ name: reward, amount: 1 });
+                                        } else {
+                                            player.backpack.inventory[bp].amount++;
+                                        }
+
+                                    }
+                                
+                                    activeBubble = {
+                                        x: canvas.width / 2,
+                                        y: canvas.height / 2,
+                                        text: `You got: ${item[0].item[0].name}, ${item[0].item[1].name}, ${item[0].item[2].name}!`,
+                                        timer: 70
+                                    };
+                                }
+                                else{
+                                    activeBubble = { x: canvas.width/2, y: canvas.height/2, text: "Looks like your backpack can't hold more!", timer: 50 };
+                                }
+                            }
+                            else if(storepage === 2){
+                                if(player.backpack.inventory.length <= player.backpack.maximum - 1){
+
+                                    player.gems -= item[3].value;
+                                    const reward = item[3].item[0];
                                     let bp = player.backpack.inventory.findIndex(slot => slot.name.name === reward.name);
                                     if (bp === -1) {
                                         player.backpack.inventory.push({ name: reward, amount: 1 });
                                     } else {
                                         player.backpack.inventory[bp].amount++;
                                     }
-
+                                
+                                
+                                    activeBubble = {
+                                        x: canvas.width / 2,
+                                        y: canvas.height / 2,
+                                        text: `You got: ${item[3].item[0].name}!`,
+                                        timer: 70
+                                    };
                                 }
+                                else{
+                                    activeBubble = { x: canvas.width/2, y: canvas.height/2, text: "Looks like your backpack can't hold more!", timer: 50 };
+                                }
+                            }
                             
-                                activeBubble = {
-                                    x: canvas.width / 2,
-                                    y: canvas.height / 2,
-                                    text: `You got: ${item[0].item[0].name}, ${item[0].item[1].name}, ${item[0].item[2].name}!`,
-                                    timer: 70
-                                };
-                            }
-                            else{
-                                activeBubble = { x: canvas.width/2, y: canvas.height/2, text: "Looks like your backpack can't hold more!", timer: 50 };
-                            }
                             
                         }
                         else {
@@ -1624,7 +1683,13 @@ const item = [
         value: 500,
         item: [tier2gacha(), tier2gacha(), tier2gacha()],
         description: "get 3 tier 2-3 seeds randomly. But this pack only gives you the best ones for farming!"
-    }
+    },
+    {
+        name: "Blue Pixel Wings",
+        value: 100,
+        item: [blocks[8]],
+        description: "It allows you to jump in the air!"
+    },
 ]
 
 const pants = [
@@ -1841,7 +1906,7 @@ const punchTool = {
 const player = {
     name: `Josep Calleja`,
     age: 23,
-    gems: 0,
+    gems: 100,
     experience: 0,
     level: 1,
     x: randomX,
@@ -4889,6 +4954,82 @@ function storeUi(x, y){
             }
             else if(btn.id === 5){
                 const text = 'Farmer Seed Pack: 500';
+                ctx.font = '30px serif';
+                const textWidth = ctx.measureText(text).width;
+
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = "middle";
+
+
+                const centerX = btn.x + btn.width / 2;
+                const centerY = btn.y + btn.height / 2;
+
+
+                ctx.fillText(text, centerX, centerY);
+
+
+                const textStartX = centerX - textWidth / 2;
+
+
+                ctx.drawImage(gem1, textStartX + textWidth + 10, centerY - 17.5, 35, 35);
+
+
+            }
+
+                
+        }
+        if(storepage === 2){
+            if(btn.id === 3){
+                const text = 'Blue Pixel Wings: 100';
+                ctx.font = '30px serif';
+                const textWidth = ctx.measureText(text).width;
+
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = "middle";
+
+
+                const centerX = btn.x + btn.width / 2;
+                const centerY = btn.y + btn.height / 2;
+
+
+                ctx.fillText(text, centerX, centerY);
+
+
+                const textStartX = centerX - textWidth / 2;
+
+
+                ctx.drawImage(gem1, textStartX + textWidth + 10, centerY - 17.5, 35, 35);
+
+
+            }
+            else if(btn.id === 4){
+                const text = 'Coming Soon';
+                ctx.font = '30px serif';
+                const textWidth = ctx.measureText(text).width;
+
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = "middle";
+
+
+                const centerX = btn.x + btn.width / 2;
+                const centerY = btn.y + btn.height / 2;
+
+
+                ctx.fillText(text, centerX, centerY);
+
+
+                const textStartX = centerX - textWidth / 2;
+
+
+                ctx.drawImage(gem1, textStartX + textWidth + 10, centerY - 17.5, 35, 35);
+
+
+            }
+            else if(btn.id === 5){
+                const text = 'Coming Soon';
                 ctx.font = '30px serif';
                 const textWidth = ctx.measureText(text).width;
 
