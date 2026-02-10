@@ -1903,10 +1903,18 @@ const punchTool = {
   invdesign: fistDesign
 };
 
+let userName = window.prompt("Enter Username!");
+
+while (userName === null || userName.length > 16 || userName.trim() === "") {
+    userName = window.prompt("Enter a proper username bro, and don't make the name long...");
+}
+
+
+
 const player = {
-    name: `Josep Calleja`,
+    name: userName,
     age: 23,
-    gems: 100,
+    gems: 0,
     experience: 0,
     level: 1,
     x: randomX,
@@ -1926,8 +1934,8 @@ const player = {
     hair: undefined,
     hand: undefined,
     canNoClip: false,
-    premium: true,
-    showName: false,
+    premium: false,
+    showName: true,
     reach: 3,
     canDoubleJump: false,
     jumps: 1,
