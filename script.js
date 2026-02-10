@@ -328,7 +328,121 @@ window.addEventListener("pointerdown", (e) => {
 
 
 
+    if(isMobile){
+        if(!player.atBackpack && !player.atStore){
+            for(let i = 0; i < tsBtns.length; i++){
+                const btn = tsBtns[i];
+                if (
+                    clickX >= btn.x &&
+                    clickX <= btn.x + btn.w &&
+                    clickY >= btn.y &&
+                    clickY <= btn.y + btn.h
+                ) {
+                    if(btn.id == 0) keys.a = true;
+                    if(btn.id == 1) keys.d = true;
+                    if(btn.id == 2){
+                        wPressed = true;
+                        startJump();
+                    }
+                    if(btn.id == 3){
+                        if(!player.isGhost){
+                            death();
+                        }
+                    } 
+                    if(btn.id == 4) {
+                        const quickItem = player.backpack.quickUse[itemIndex];
+                        if (itemIndex === 0) {
+                            activeBubble = { x: 500, y: 350, text: "I wouldn't drop my fist if i were you...", timer: 90 };
+                            return;
+                        }
+                        if(!player.canMove || player.frozen) return;
+                        if(!quickItem){
+                            activeBubble = { x: 500, y: 350, text: "You can't drop something that doesn't exist, like your father...", timer: 90 };
+                            return;
+                        }
+
+                        const roundedX = Math.floor(player.x / 50) * 50;
+                        const roundedX2 = Math.round(player.x / 50) * 50;
+                        const roundedY = Math.floor(player.y / 50) * 50;
+
+                        const block = gameblocks.find(b => b.x === roundedX2 + grid && b.y === roundedY);
+                        const block2 = gameblocks.find(b => b.x === roundedX - grid && b.y === roundedY);
+                        const nameToFind = quickItem.name; 
+
+
+                        const indexInItemsClass = itemsClass.findIndex(i => i.name === nameToFind);
+
+                        console.log("Item Index:", itemIndex);
+                        console.log("Quick Item:", quickItem);
+
+
+                        console.log(indexInItemsClass)
+                        if (indexInItemsClass === -1) {
+                            console.warn(`'${nameToFind}' not found in itemsClass`);
+                            return;
+                        }
+
+                        const item = itemsClass[indexInItemsClass].design;
+
+
+                        const item0 = player.backpack.quickUse[itemIndex];
+                        const item1 = player.backpack.inventory.findIndex(invItem => invItem.name === item0);
+                        const item2 = player.backpack.inventory[item1];
+
+                        if(item2.amount <= 1){
+                            if(player.facing === 1 && !block){
+                                dropItem(player.x + grid, player.y, indexInItemsClass);
+                                player.backpack.inventory.splice(item1, 1);
+                                player.backpack.quickUse.splice(itemIndex, 1);
+                                player.backpack.quickUse.push(undefined);
+                                itemIndex = 0;
+                            }
+                            else if(player.facing === 0 && !block2){
+                                dropItem(player.x - grid, player.y, indexInItemsClass);
+                                player.backpack.inventory.splice(item1, 1);
+                                player.backpack.quickUse.splice(itemIndex, 1);
+                                player.backpack.quickUse.push(undefined);
+                                itemIndex = 0;
+                            }
+                            else{
+                                activeBubble = { x: 500, y: 350, text: "The item bounced back into your hand", timer: 90 };
+                            }
+                        
+                        }
+                        else{
+                            
+                            if(player.facing === 1 && !block){
+                                dropItem(player.x + grid, player.y, indexInItemsClass);
+                                item2.amount--;
+                            }
+                            else if(player.facing === 0 && !block2){
+                                dropItem(player.x - grid, player.y, indexInItemsClass);
+                                item2.amount--;
+                            }
+                            else{
+                                activeBubble = { x: 500, y: 350, text: "The item bounced back into your hand", timer: 90 };
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     if (bi !== -1 && canReach(roundedx, roundedy) && !player.atBackpack && !player.atStore) {
+        if(isMobile){
+            for(let i = 0; i < tsBtns.length; i++){
+                const btn = tsBtns[i];
+                if (
+                    clickX >= btn.x &&
+                    clickX <= btn.x + btn.w &&
+                    clickY >= btn.y &&
+                    clickY <= btn.y + btn.h
+                ) {
+                    return;
+                }
+            }
+        }
         if (selectedItem.isBlock && !(sx >= 5 && sx <= 40 && sy >= 165 && sy <= 200)) {
 
             if (!isPlayerOnTile(roundedx, roundedy) && !block && !props  ) {
@@ -934,108 +1048,6 @@ window.addEventListener("pointerdown", (e) => {
 
         }
 
-    }
-
-
-    if(isMobile){
-        if(!player.atBackpack && !player.atStore){
-            for(let i = 0; i < tsBtns.length; i++){
-                const btn = tsBtns[i];
-                if (
-                    clickX >= btn.x &&
-                    clickX <= btn.x + btn.w &&
-                    clickY >= btn.y &&
-                    clickY <= btn.y + btn.h
-                ) {
-                    if(btn.id == 0) keys.a = true;
-                    if(btn.id == 1) keys.d = true;
-                    if(btn.id == 2){
-                        wPressed = true;
-                        startJump();
-                    }
-                    if(btn.id == 3){
-                        if(!player.isGhost){
-                            death();
-                        }
-                    } 
-                    if(btn.id == 4) {
-                        const quickItem = player.backpack.quickUse[itemIndex];
-                        if (itemIndex === 0) {
-                            activeBubble = { x: 500, y: 350, text: "I wouldn't drop my fist if i were you...", timer: 90 };
-                            return;
-                        }
-                        if(!player.canMove || player.frozen) return;
-                        if(!quickItem){
-                            activeBubble = { x: 500, y: 350, text: "You can't drop something that doesn't exist, like your father...", timer: 90 };
-                            return;
-                        }
-
-                        const roundedX = Math.floor(player.x / 50) * 50;
-                        const roundedX2 = Math.round(player.x / 50) * 50;
-                        const roundedY = Math.floor(player.y / 50) * 50;
-
-                        const block = gameblocks.find(b => b.x === roundedX2 + grid && b.y === roundedY);
-                        const block2 = gameblocks.find(b => b.x === roundedX - grid && b.y === roundedY);
-                        const nameToFind = quickItem.name; 
-
-
-                        const indexInItemsClass = itemsClass.findIndex(i => i.name === nameToFind);
-
-                        console.log("Item Index:", itemIndex);
-                        console.log("Quick Item:", quickItem);
-
-
-                        console.log(indexInItemsClass)
-                        if (indexInItemsClass === -1) {
-                            console.warn(`'${nameToFind}' not found in itemsClass`);
-                            return;
-                        }
-
-                        const item = itemsClass[indexInItemsClass].design;
-
-
-                        const item0 = player.backpack.quickUse[itemIndex];
-                        const item1 = player.backpack.inventory.findIndex(invItem => invItem.name === item0);
-                        const item2 = player.backpack.inventory[item1];
-
-                        if(item2.amount <= 1){
-                            if(player.facing === 1 && !block){
-                                dropItem(player.x + grid, player.y, indexInItemsClass);
-                                player.backpack.inventory.splice(item1, 1);
-                                player.backpack.quickUse.splice(itemIndex, 1);
-                                player.backpack.quickUse.push(undefined);
-                                itemIndex = 0;
-                            }
-                            else if(player.facing === 0 && !block2){
-                                dropItem(player.x - grid, player.y, indexInItemsClass);
-                                player.backpack.inventory.splice(item1, 1);
-                                player.backpack.quickUse.splice(itemIndex, 1);
-                                player.backpack.quickUse.push(undefined);
-                                itemIndex = 0;
-                            }
-                            else{
-                                activeBubble = { x: 500, y: 350, text: "The item bounced back into your hand", timer: 90 };
-                            }
-                        
-                        }
-                        else{
-                            
-                            if(player.facing === 1 && !block){
-                                dropItem(player.x + grid, player.y, indexInItemsClass);
-                                item2.amount--;
-                            }
-                            else if(player.facing === 0 && !block2){
-                                dropItem(player.x - grid, player.y, indexInItemsClass);
-                                item2.amount--;
-                            }
-                            else{
-                                activeBubble = { x: 500, y: 350, text: "The item bounced back into your hand", timer: 90 };
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
 
