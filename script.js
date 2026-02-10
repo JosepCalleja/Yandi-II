@@ -175,8 +175,27 @@ canvas.addEventListener("contextmenu", e => e.preventDefault());
 
 function harvesting(i, props, roundedX, roundedY){
     if(props.ready == 2){
-        console.log(props);
         treeFarmable(i, roundedX, roundedY);
+        removeProps(roundedX, roundedY);
+    }
+    else{
+        //idk if i wanna make the trees breakable before ready lel.
+    }
+}
+
+function harvestingSemi(i, props, roundedX, roundedY){
+    if(props.ready == 2){
+        treeKindaFarmable(i, roundedX, roundedY);
+        removeProps(roundedX, roundedY);
+    }
+    else{
+        //idk if i wanna make the trees breakable before ready lel.
+    }
+}
+
+function harvestingUn(i, props, roundedX, roundedY){
+    if(props.ready == 2){
+        treeUnFarmable(i, roundedX, roundedY);
         removeProps(roundedX, roundedY);
     }
     else{
@@ -943,31 +962,31 @@ window.addEventListener("pointerdown", (e) => {
                         harvesting(5, props, roundedx, roundedy);
                     }
                    else if(props.custom == "stoneblocktree"){
-                        harvesting(7, props, roundedx, roundedy);
+                        harvestingSemi(7, props, roundedx, roundedy);
                     }
                    else if(props.custom == "lavatree"){
-                        harvesting(9, props, roundedx, roundedy);
+                        harvestingSemi(9, props, roundedx, roundedy);
                     }
                     else if(props.custom == "grasstree"){
                         harvesting(11, props, roundedx, roundedy);
                     }
                     else if(props.custom == "sandtree"){
-                        harvesting(13, props, roundedx, roundedy);
+                        harvestingUn(13, props, roundedx, roundedy);
                     }
                     else if(props.custom == "logtree"){
-                        harvesting(15, props, roundedx, roundedy);
+                        harvestingSemi(15, props, roundedx, roundedy);
                     }
                     else if(props.custom == "vegetationblocktree"){
                         harvesting(17, props, roundedx, roundedy);
                     }
                     else if(props.custom == "hangingleavestree"){
-                        harvesting(19, props, roundedx, roundedy);
+                        harvestingSemi(19, props, roundedx, roundedy);
                     }
                     else if(props.custom == "stonebackgroundtree"){
-                        harvesting(21, props, roundedx, roundedy);
+                        harvestingUn(21, props, roundedx, roundedy);
                     }
                     else if(props.custom == "watertree"){
-                        harvesting(23, props, roundedx, roundedy);
+                        harvestingUn(23, props, roundedx, roundedy);
                     }
                     else{
                         removeProps(roundedx, roundedy);
@@ -1670,7 +1689,7 @@ const itemsClass = [
 const blocks = [
     new Block(`Grass Block`, 0, 0, grid, grid, 1, true, blockIndexToDesign[0], blockIndexToDesign2[0], `placable`, 3, undefined, 3, 'grass'),//#0
     new Block(`Soil Block`, 0, 0, grid, grid, 1, true, blockIndexToDesign[1], blockIndexToDesign2[1], `placable`, 3, undefined, 3, 'soil'),//#1
-    new Block(`Stone Block`, 0, 0, grid, grid, 1, true, blockIndexToDesign[2], blockIndexToDesign2[2], `placable`, 5, undefined, 5, 'stoneblock'),//#2
+    new Block(`Stone Block`, 0, 0, grid, grid, 1, true, blockIndexToDesign[2], blockIndexToDesign2[2], `placable`, 7, undefined, 7, 'stoneblock'),//#2
     new Block("Cave Background", 0, 0, grid, grid, 1, false, blockIndexToDesign[3], blockIndexToDesign2[3], `placable`, 3, undefined, 3, 'cave'),//#3
     new Block(`Navy Pant`, 0, 0, grid, grid, 2, false, blockIndexToDesign[4], blockIndexToDesign2[4], `wearable-pant`, 0, undefined, 0, 'navy'),//#4
     new Block(`Red Pant`, 0, 0, grid, grid, 2, false, blockIndexToDesign[5], blockIndexToDesign2[5], `wearable-pant`, 0, undefined, 0, 'redpant'),//#5
@@ -1694,13 +1713,13 @@ const blocks = [
     new Block(`Sand Block Seed`, 0, 0, grid, grid, 2, false, blockIndexToDesign[23], blockIndexToDesign2[23], `placable-props`, 1, undefined, 1, 'sandtree'),//#23
     new Block(`Log Block Seed`, 0, 0, grid, grid, 2, false, blockIndexToDesign[24], blockIndexToDesign2[24], `placable-props`, 1, undefined, 1, 'logtree'),//#24
     new Block(`Bedrock`, 0, 0, grid, grid, 2, true, blockIndexToDesign[25], blockIndexToDesign2[25], `unbreakable`, 1, undefined, 1, 'bedrock'),//#25
-    new Block(`Vegetation Block`, 0, 0, grid, grid, 2, true, blockIndexToDesign[26], blockIndexToDesign2[26], `placable`, 3, undefined, 3, 'vegetationblock'),//#26
+    new Block(`Vegetation Block`, 0, 0, grid, grid, 2, true, blockIndexToDesign[26], blockIndexToDesign2[26], `placable`, 4, undefined, 4, 'vegetationblock'),//#26
     new Block(`Vegetation Block Seed`, 0, 0, grid, grid, 2, false, blockIndexToDesign[27], blockIndexToDesign2[27], `placable-props`, 1, undefined, 1, 'vegetationblocktree'),//#27
-    new Block(`Hanging Leaves`, 0, 0, grid, grid, 2, false, blockIndexToDesign[28], blockIndexToDesign2[28], `placable-props`, 2, undefined, 3, 'hangingleaves'),//#28
+    new Block(`Hanging Leaves`, 0, 0, grid, grid, 2, false, blockIndexToDesign[28], blockIndexToDesign2[28], `placable-props`, 2, undefined, 2, 'hangingleaves'),//#28
     new Block(`Hanging Leaves Seed`, 0, 0, grid, grid, 2, false, blockIndexToDesign[29], blockIndexToDesign2[29], `placable-props`, 1, undefined, 1, 'hangingleavestree'),//#29
-    new Block(`Stone Background`, 0, 0, grid, grid, 2, false, blockIndexToDesign[30], blockIndexToDesign2[30], `placable`, 4, undefined, 4, 'stonebackground'),//#30
+    new Block(`Stone Background`, 0, 0, grid, grid, 2, false, blockIndexToDesign[30], blockIndexToDesign2[30], `placable`, 5, undefined, 5, 'stonebackground'),//#30
     new Block(`Stone Background Seed`, 0, 0, grid, grid, 2, false, blockIndexToDesign[31], blockIndexToDesign2[31], `placable-props`, 1, undefined, 1, 'stonebackgroundtree'),//#31
-    new Block(`Water`, 0, 0, grid, grid, 2, false, blockIndexToDesign[32], blockIndexToDesign2[32], `placable-props`, 4, undefined, 4, 'water'),//#32
+    new Block(`Water`, 0, 0, grid, grid, 2, false, blockIndexToDesign[32], blockIndexToDesign2[32], `placable-props`, 5, undefined, 5, 'water'),//#32
     new Block(`Water Seed`, 0, 0, grid, grid, 2, false, blockIndexToDesign[33], blockIndexToDesign2[33], `placable-props`, 1, undefined, 1, 'watertree'),//#33
 ];
 
@@ -1789,7 +1808,7 @@ function treeFarmable(id, roundedx, roundedy) {     // ID2 STANDS FOR ITEM INDEX
     const rand2 = Math.random();
     const rand3 = Math.random();
 
-    const segments = 16;
+    const segments = 14;
     const segmentSize = 1 / segments;
 
     for (let i = 0; i < segments; i++) {
@@ -1831,7 +1850,7 @@ function treeKindaFarmable(id, roundedx, roundedy) {
     const rand2 = Math.random();
     const rand3 = Math.random();
 
-    const segments = 12;
+    const segments = 10;
     const segmentSize = 1 / segments;
 
     for (let i = 0; i < segments; i++) {
@@ -1870,7 +1889,7 @@ function treeUnFarmable(id, roundedx, roundedy) {
     const rand2 = Math.random();
     const rand3 = Math.random();
 
-    const segments = 8;
+    const segments = 6;
     const segmentSize = 1 / segments;
 
     for (let i = 0; i < segments; i++) {
